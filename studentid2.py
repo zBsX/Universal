@@ -31,21 +31,20 @@ class Student:
     # Init 文件初始化
     def InitSystem(self):
         self.CheckDataFile()
-        run = True
         global Tempinfo
         global data
+        global Run
+        Run = True
         data = dict()
         Tempinfo = dict()
         try:
-            while run:
-                with open('data.json', 'r', encoding='utf-8') as file:
-                    data = json.load(file)
-                
-                self.sid = list(data.keys())
-                # matches = re.findall(self.patterns, str(data))
-                # self.sid = [int(i) for i in matches[::3]]
-                print('学生ID:', self.sid)
-                break
+            with open('data.json', 'r', encoding='utf-8') as file:
+                data = json.load(file)
+            
+            self.sid = list(data.keys())
+            # matches = re.findall(self.patterns, str(data))
+            # self.sid = [int(i) for i in matches[::3]]
+            print('学生ID:', self.sid)
         except json.decoder.JSONDecodeError:
             print('目前没有学生,正在创建学生库...')
             self.CheckDataFile()
@@ -53,9 +52,9 @@ class Student:
     # ID 学生ID ### 修复重复ID
     def InputID(self) -> str:
            
-            while True:
+            while Run:
                 try:
-                    self.student_id = str(input('请输入你想创建的ID: \f 按 -1 列出，按 0 退出 \f '))
+                    self.student_id = str(input('请输入你想创建的ID: 按 -1 列出，按 0 退出 '))
                     
                     if int(self.student_id) < -1:
                         print('无效输入')
@@ -87,7 +86,7 @@ class Student:
     # Name 名字
     def InputName(self) -> str:
                 
-                while True:
+                while Run:
                     try:
                         self.student_name = input('name:')
                         if self.student_name == 'q':
@@ -108,7 +107,7 @@ class Student:
     # Gender 性别             
     def InputGender(self) -> str:
                   
-                while True:
+                while Run:
                     try:
                         self.student_gender = input('请选择你的性别: \f男man 女woman 退出q\n')
                     except ValueError:
@@ -126,7 +125,7 @@ class Student:
     # Score 分数            
     def InputScore(self) -> float:
                 
-                while True:
+                while Run:
                     try:
                         self.student_score = float(input('score (-1 to quit):'))
                         match self.student_score:
@@ -145,7 +144,7 @@ class Student:
                         print(Error)
                         continue    
    
-    def ExportJSON(self) -> None:
+    def ExportJSON(self) -> json:
         
                 # List 学生列表
                 self.sid.append(self.student_id)
@@ -215,7 +214,32 @@ class Student:
                 continue
             
     def DeleteID(self):
-        pass
+        while Run:
+            self.InitSystem()
+            print(data)
+            idset = set()
+            sidl = list(data.keys())
+            for id in sidl:
+                idset.add(id)
+            selet = input('输入你想修改的学号:')
+            
+            if selet in idset:
+                print('已选择ID:', selet)
+                del data[selet]
+                print(data)
+                with open('data.json', 'w', encoding='utf-8') as file:
+                    json.dump(data, file, ensure_ascii=False, indent=4)
+                idset.clear()
+                print(idset)
+                continue
+            elif selet == 'q':
+                break
+            else:
+                print('未找到ID')
+                break
+        
+        
+        
     
     
     
@@ -239,7 +263,14 @@ if __name__ == '__main__': ### 完成状态
                     Tempinfo['ID'] = self.student_id
                 
                 else:
-                    print('你已经输入过ID了')
+                    print('你已经输入过ID了,要修改吗？')
+                    sele = input('y/n')
+                    if sele == 'y':
+                        Tempinfo['ID'] = self.InputID()
+                    elif sele == 'n':
+                        break
+                    else:
+                        print('无效输入')
                     continue
                     
                 print(Tempinfo)
@@ -286,6 +317,9 @@ if __name__ == '__main__': ### 完成状态
                     
                 print(Tempinfo)
                 continue
+            
+            case 'del':
+                self.DeleteID()
             
             case 'done':
                 self.ExportJSON()
