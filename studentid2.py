@@ -117,10 +117,11 @@ class Student:
                     if self.student_gender.lower() not in {'man', 'woman', 'q'}:
                         print('性别输入错误')
                         continue
-                    if self.student_gender == '退出':
+                    if self.student_gender == 'q':
+                        print('退出')
                         break
+                    print('你的性别是' , self.student_gender)
                     return self.student_gender
-                print('你的性别是' , self.student_gender)
                 
     # Score 分数            
     def InputScore(self) -> float:
@@ -162,11 +163,12 @@ class Student:
                     with open('data.json', 'w', encoding='utf-8') as file:
                         json.dump(data, file, ensure_ascii=False, indent=4)
                     print('successfully export studentlist')
+                    data.clear(); Tempinfo.clear()
                 elif select == 'q':
                     exit()
                     
     # Student Selection Sys 学生选择系统
-    def select_student(self):
+    def select_student(self) -> None:
         
         idset = set()
         while True:
@@ -225,12 +227,17 @@ if __name__ == '__main__': ### 完成状态
     Run = True
     
     while Run:
-        selection = input('请选择:')
+        selection = input('请选择create find gender name score q:')
         match selection:
             case 'create':          
                 if not status[0]:
                     Tempinfo.setdefault('ID', self.InputID())
                     status[0] = True
+                
+                elif Tempinfo['ID'] == None:
+                    print(self.InputID())
+                    Tempinfo['ID'] = self.student_id
+                
                 else:
                     print('你已经输入过ID了')
                     continue
@@ -283,6 +290,9 @@ if __name__ == '__main__': ### 完成状态
             case 'done':
                 self.ExportJSON()
                 status = [False, False, False, False]
+            case 'q':
+                break
+                
             case _:
                 print('输入错误')
                 continue
