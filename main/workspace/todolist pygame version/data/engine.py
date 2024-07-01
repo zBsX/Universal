@@ -42,9 +42,9 @@ class Object: # basic physics
         self.pos[1] += int(self.vel[1])
         self.pos[0] += int(self.vel[0])
 
-        if 0 < abs(self.vel[0]) < 0.5:
+        if 0 < abs(self.vel[0]) < 0.3:
             self.vel[0] = 0
-        if 0 < abs(self.vel[1]) < 0.5:
+        if 0 < abs(self.vel[1]) < 0.3:
             self.vel[1] = 0
 
 
